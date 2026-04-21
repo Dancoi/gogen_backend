@@ -1,0 +1,141 @@
+# Binaries
+/bin/
+/dist/
+/*.exe
+/*.exe~
+/*.dll
+/*.so
+/*.dylib
+*.test
+*.out
+
+# Dependency directories
+/vendor/
+/node_modules/
+
+# Go workspace file
+go.work
+go.work.sum
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# OS generated files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Testing coverage
+*.cover
+*.coverprofile
+coverage.out
+coverage.html
+*.cgo
+
+# Build artifacts
+*.o
+*.a
+*.so
+*.dylib
+*.dll
+*.exe
+
+# Logs
+*.log
+/logs/
+/tmp/
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Dependency management
+# Glide
+glide.lock
+glide.yaml
+
+# Dep
+Gopkg.lock
+Gopkg.toml
+
+# Binary and data files
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+*.prof
+*.cgo1
+*.cgo2
+*.cgo
+*.syso
+
+# Debug files
+__debug_bin
+*.debug
+
+# Vendor
+vendor/
+Godeps/
+
+# Tools
+/.tools/
+/.gopath/
+
+# Custom (для проектов с sqlc)
+/sqlc-gen-go/
+/sqlc-gen-python/
+
+# Профайлинг
+cpu.pprof
+mem.pprof
+block.pprof
+mutex.pprof
+
+# Секреты и ключи
+*.pem
+*.key
+*.crt
+*.p12
+secrets/
+credentials.json
+
+# Результаты линтеров
+*.report
+*.out
+
+# Старые бэкапы
+*.bak
+*.backup
+*.old
+
+# Docker
+.docker/
+docker-compose.override.yml
+*.tar.gz
+*.tar
+
+# Kubernetes generated files
+*.kubeconfig
+helm/values.local.yaml
+
+# Makefile artifacts
+*.d
+*.mk
+
+# Результаты генерации кода (если генерируете в папку)
+/gen/
+/generated/
