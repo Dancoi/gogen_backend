@@ -139,3 +139,4 @@ helm/values.local.yaml
 # Результаты генерации кода (если генерируете в папку)
 /gen/
 /generated/
+/build
