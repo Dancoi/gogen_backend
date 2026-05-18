@@ -19,6 +19,7 @@ type TokenService interface {
 	ValidateApiToken(ctx context.Context, token string) (*sqlc.ApiToken, error)
 	RevokeApiToken(ctx context.Context, tokenID int32) error
 	ListUserTokens(ctx context.Context, userID int32) ([]sqlc.ApiToken, error)
+	GetTokenByID(ctx context.Context, tokenID int32) (*sqlc.ApiToken, error)
 }
 
 type tokenService struct {
@@ -148,10 +149,15 @@ func (s *tokenService) ValidateApiToken(ctx context.Context, token string) (*sql
 
 // RevokeApiToken отзывает API токен
 func (s *tokenService) RevokeApiToken(ctx context.Context, tokenID int32) error {
-	_, err := s.apiTokenRepo.RevokeApiToken(ctx, tokenID)
+	fmt.Printf("[RevokeApiToken] Revoking token ID: %d\n", tokenID)
+
+	token, err := s.apiTokenRepo.RevokeApiToken(ctx, tokenID)
 	if err != nil {
+		fmt.Printf("[RevokeApiToken] Error revoking token: %v\n", err)
 		return fmt.Errorf("failed to revoke API token: %w", err)
 	}
+
+	fmt.Printf("[RevokeApiToken] Token revoked successfully: ID=%d, UserID=%d\n", token.ID, token.UserID)
 
 	return nil
 }
@@ -164,4 +170,17 @@ func (s *tokenService) ListUserTokens(ctx context.Context, userID int32) ([]sqlc
 	}
 
 	return tokens, nil
+}
+
+// GetTokenByID получает токен по ID
+func (s *tokenService) GetTokenByID(ctx context.Context, tokenID int32) (*sqlc.ApiToken, error) {
+	token, err := s.apiTokenRepo.GetApiTokenByID(ctx, tokenID)
+	if err != nil {
+		if err.Error() == "no rows in result set" {
+			return nil, fmt.Errorf("token not found")
+		}
+		return nil, fmt.Errorf("failed to get token: %w", err)
+	}
+
+	return token, nil
 }

@@ -91,7 +91,7 @@ type ListTokensResponse struct {
 	LastUsed  string `json:"last_used"`
 }
 
-// ListTokens получает все токены пользователя
+// ListTokens получает все активные токены пользователя (отозванные скрыты)
 // GET /api/tokens
 func (h *TokenHandler) ListTokens(c *gin.Context) {
 	// Получаем userID из контекста
@@ -111,6 +111,11 @@ func (h *TokenHandler) ListTokens(c *gin.Context) {
 
 	var response []ListTokensResponse
 	for _, token := range tokens {
+		// Пропускаем отозванные токены
+		if !token.IsActive.Bool || token.RevokedAt.Valid {
+			continue
+		}
+
 		lastUsed := ""
 		if token.LastUsedAt.Valid {
 			lastUsed = token.LastUsedAt.Time.String()
@@ -139,7 +144,25 @@ func (h *TokenHandler) RevokeToken(c *gin.Context) {
 		return
 	}
 
-	// TODO: Проверить что токен принадлежит текущему пользователю
+	// Получаем userID из контекста (установлен AuthMiddleware)
+	userIDInterface, exists := c.Get("userID")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
+		return
+	}
+	userID := userIDInterface.(int32)
+
+	// Проверяем что токен принадлежит текущему пользователю
+	token, err := h.tokenService.GetTokenByID(c.Request.Context(), int32(tokenID))
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "token not found"})
+		return
+	}
+
+	if token.UserID != userID {
+		c.JSON(http.StatusForbidden, gin.H{"error": "you don't have permission to revoke this token"})
+		return
+	}
 
 	err = h.tokenService.RevokeApiToken(c.Request.Context(), int32(tokenID))
 	if err != nil {
